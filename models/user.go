@@ -7,7 +7,8 @@ type (
 		ID        uint      `gorm:"primaryKey" json:"user_id"`
 		Username  string    `json:"username"`
 		Email     string    `json:"email"`
-		Password  string    `json:"-"`
+		Password  string    `json:"password"`
 		CreatedAt time.Time `json:"created_at"`
+		Reviews 	[]Review	`gorm:"foreignKey:user_id;references:user_id"`
 	}
 )
