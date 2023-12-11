@@ -4,11 +4,12 @@ import "time"
 
 type (
 	Phone struct {
-		ID          uint      `gorm:"primaryKey" json:"phone_id"`
+		PhoneID     int      	`gorm:"primaryKey" json:"phone_id"`
 		Brand       string    `json:"brand"`
 		Model       string    `json:"model"`
 		ReleaseDate time.Time `json:"release_date"`
-		Price       uint      `json:"price"`
+		Price       int      	`json:"price"`
 		ImageURL    string    `json:"image_url"`
+		Reviews 		[]Review	`gorm:"foreignKey:phone_id;references:phone_id"`
 	}
 )
