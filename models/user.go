@@ -1,10 +1,14 @@
 package models
 
 import (
+	"html"
+	"strings"
 	"time"
+	
+	"golang-phone-review-api/utils/token"
+
 	"golang.org/x/crypto/bcrypt"
   "gorm.io/gorm"
-	"golang-phone-review-api/utils/token"
 )
 
 type (
@@ -58,7 +62,7 @@ func (u *User) SaveUser(db *gorm.DB) (*User, error) {
 	// remove spaces in username
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
-	var err Error = db.Create(&u).Error
+	var err error = db.Create(&u).Error
 	if err != nil {
 		return &User{}, err
 	}
