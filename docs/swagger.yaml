@@ -1,12 +1,44 @@
 definitions:
+  controllers.ChangePasswordInput:
+    properties:
+      confirm_new_password:
+        example: admin1
+        type: string
+        x-order: "3"
+      current_password:
+        example: admin
+        type: string
+        x-order: "1"
+      new_password:
+        example: admin1
+        type: string
+        x-order: "2"
+      username:
+        example: admin
+        type: string
+        x-order: "0"
+    required:
+    - confirm_new_password
+    - current_password
+    - new_password
+    - username
+    type: object
+  controllers.ChangePasswordResponse:
+    properties:
+      message:
+        example: change password success
+        type: string
+    type: object
   controllers.LoginInput:
     properties:
       password:
         example: admin
         type: string
+        x-order: "1"
       username:
         example: admin
         type: string
+        x-order: "0"
     required:
     - password
     - username
@@ -16,9 +48,11 @@ definitions:
       message:
         example: login success
         type: string
+        x-order: "0"
       token:
         example: string
         type: string
+        x-order: "2"
       user:
         properties:
           email:
@@ -31,21 +65,26 @@ definitions:
             example: John
             type: string
         type: object
+        x-order: "1"
     type: object
   controllers.RegisterInput:
     properties:
       email:
         example: admin@mail.com
         type: string
+        x-order: "2"
       password:
         example: admin
         type: string
+        x-order: "1"
       role:
         example: Admin
         type: string
+        x-order: "3"
       username:
         example: admin
         type: string
+        x-order: "0"
     required:
     - email
     - password
@@ -57,6 +96,7 @@ definitions:
       message:
         example: registration success
         type: string
+        x-order: "0"
       user:
         properties:
           email:
@@ -69,10 +109,32 @@ definitions:
             example: John
             type: string
         type: object
+        x-order: "1"
     type: object
 info:
   contact: {}
 paths:
+  /change-password:
+    post:
+      description: Change user password by inputting the current password and the
+        new password.
+      parameters:
+      - description: the body to change user password
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ChangePasswordInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.ChangePasswordResponse'
+      summary: Change user password.
+      tags:
+      - Auth
   /login:
     post:
       description: Logging in to get jwt token to access admin or user api by roles.
@@ -90,7 +152,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/controllers.LoginResponse'
-      summary: Login as as user.
+      summary: Login as user.
       tags:
       - Auth
   /register:

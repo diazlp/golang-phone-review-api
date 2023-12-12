@@ -15,6 +15,37 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/change-password": {
+            "post": {
+                "description": "Change user password by inputting the current password and the new password.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Change user password.",
+                "parameters": [
+                    {
+                        "description": "the body to change user password",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ChangePasswordInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ChangePasswordResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Logging in to get jwt token to access admin or user api by roles.",
@@ -24,7 +55,7 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Login as as user.",
+                "summary": "Login as user.",
                 "parameters": [
                     {
                         "description": "the body to login a user",
@@ -79,6 +110,46 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.ChangePasswordInput": {
+            "type": "object",
+            "required": [
+                "confirm_new_password",
+                "current_password",
+                "new_password",
+                "username"
+            ],
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "admin"
+                },
+                "current_password": {
+                    "type": "string",
+                    "x-order": "1",
+                    "example": "admin"
+                },
+                "new_password": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "admin1"
+                },
+                "confirm_new_password": {
+                    "type": "string",
+                    "x-order": "3",
+                    "example": "admin1"
+                }
+            }
+        },
+        "controllers.ChangePasswordResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "change password success"
+                }
+            }
+        },
         "controllers.LoginInput": {
             "type": "object",
             "required": [
@@ -86,12 +157,14 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
-                "password": {
-                    "type": "string",
-                    "example": "admin"
-                },
                 "username": {
                     "type": "string",
+                    "x-order": "0",
+                    "example": "admin"
+                },
+                "password": {
+                    "type": "string",
+                    "x-order": "1",
                     "example": "admin"
                 }
             }
@@ -101,11 +174,8 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string",
+                    "x-order": "0",
                     "example": "login success"
-                },
-                "token": {
-                    "type": "string",
-                    "example": "string"
                 },
                 "user": {
                     "type": "object",
@@ -122,7 +192,13 @@ const docTemplate = `{
                             "type": "string",
                             "example": "John"
                         }
-                    }
+                    },
+                    "x-order": "1"
+                },
+                "token": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "string"
                 }
             }
         },
@@ -135,21 +211,25 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
-                "email": {
+                "username": {
                     "type": "string",
-                    "example": "admin@mail.com"
+                    "x-order": "0",
+                    "example": "admin"
                 },
                 "password": {
                     "type": "string",
+                    "x-order": "1",
                     "example": "admin"
+                },
+                "email": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "admin@mail.com"
                 },
                 "role": {
                     "type": "string",
+                    "x-order": "3",
                     "example": "Admin"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "admin"
                 }
             }
         },
@@ -158,6 +238,7 @@ const docTemplate = `{
             "properties": {
                 "message": {
                     "type": "string",
+                    "x-order": "0",
                     "example": "registration success"
                 },
                 "user": {
@@ -175,7 +256,8 @@ const docTemplate = `{
                             "type": "string",
                             "example": "John"
                         }
-                    }
+                    },
+                    "x-order": "1"
                 }
             }
         }

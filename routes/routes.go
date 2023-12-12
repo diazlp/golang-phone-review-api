@@ -14,6 +14,7 @@ import (
 func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
+	r.POST("/change-password", controllers.ChangePassword)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
