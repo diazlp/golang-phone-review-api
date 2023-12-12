@@ -1,0 +1,116 @@
+definitions:
+  controllers.LoginInput:
+    properties:
+      password:
+        example: admin
+        type: string
+      username:
+        example: admin
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  controllers.LoginResponse:
+    properties:
+      message:
+        example: login success
+        type: string
+      token:
+        example: string
+        type: string
+      user:
+        properties:
+          email:
+            example: john@example.com
+            type: string
+          role:
+            example: user
+            type: string
+          username:
+            example: John
+            type: string
+        type: object
+    type: object
+  controllers.RegisterInput:
+    properties:
+      email:
+        example: admin@mail.com
+        type: string
+      password:
+        example: admin
+        type: string
+      role:
+        example: Admin
+        type: string
+      username:
+        example: admin
+        type: string
+    required:
+    - email
+    - password
+    - role
+    - username
+    type: object
+  controllers.RegisterResponse:
+    properties:
+      message:
+        example: registration success
+        type: string
+      user:
+        properties:
+          email:
+            example: john@example.com
+            type: string
+          role:
+            example: user
+            type: string
+          username:
+            example: John
+            type: string
+        type: object
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      description: Logging in to get jwt token to access admin or user api by roles.
+      parameters:
+      - description: the body to login a user
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.LoginResponse'
+      summary: Login as as user.
+      tags:
+      - Auth
+  /register:
+    post:
+      description: registering a user from public access.
+      parameters:
+      - description: the body to register a user
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Register Success Response
+          schema:
+            $ref: '#/definitions/controllers.RegisterResponse'
+      summary: Register a user.
+      tags:
+      - Auth
+swagger: "2.0"

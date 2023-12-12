@@ -17,19 +17,46 @@ import (
 
 type (
 	LoginInput struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		Username string `json:"username" binding:"required" example:"admin"`
+		Password string `json:"password" binding:"required" example:"admin"`
 	}
 
 	RegisterInput struct {
-		Username 	string `json:"username" binding:"required"`
-    Password 	string `json:"password" binding:"required"`
-    Email    	string `json:"email" binding:"required"`
-    Role    	string `json:"role" binding:"required"`
+		Username 	string `json:"username" binding:"required" example:"admin"`
+    Password 	string `json:"password" binding:"required" example:"admin"`
+    Email    	string `json:"email" binding:"required" example:"admin@mail.com"`
+    Role    	string `json:"role" binding:"required" example:"Admin"`
+	}
+
+	LoginResponse struct {
+		Message 	string 	`json:"message" example:"login success"`
+		User 			struct {
+			Username string `json:"username" example:"John"`
+			Email    string `json:"email" example:"john@example.com"`
+			Role     string `json:"role" example:"user"`
+		} `json:"user"`
+		Token 		string 	`json:"token" example:"string"`
+	}
+
+	RegisterResponse struct {
+		Message 	string 	`json:"message" example:"registration success"`
+		User 			struct {
+			Username string `json:"username" example:"John"`
+			Email    string `json:"email" example:"john@example.com"`
+			Role     string `json:"role" example:"user"`
+		} `json:"user"`
+		
 	}
 )
 
-func LoginHandler(c *gin.Context) {
+// @Summary Login as as user.
+// @Description Logging in to get jwt token to access admin or user api by roles.
+// @Tags Auth
+// @Param Body body LoginInput true "the body to login a user"
+// @Produce json
+// @Success 200 {object} LoginResponse
+// @Router /login [post]
+func Login(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var input LoginInput
 
@@ -44,6 +71,7 @@ func LoginHandler(c *gin.Context) {
 	u.Password = input.Password
 	
 	token, err := models.LoginCheck(u.Username, u.Password, db)
+	_ = db.Model(models.User{}).Where("username = ?", input.Username).Take(&u).Error
 
 	if err != nil {
 		fmt.Println(err)
@@ -59,6 +87,13 @@ func LoginHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "login success", "user": user, "token": token})
 }
 
+// @Summary Register a user.
+// @Description registering a user from public access.
+// @Tags Auth
+// @Param Body body RegisterInput true "the body to register a user"
+// @Produce json
+// @Success 201 {object} RegisterResponse  "Register Success Response"
+// @Router /register [post]
 func Register(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var input RegisterInput
