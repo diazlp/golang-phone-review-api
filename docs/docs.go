@@ -98,6 +98,40 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a phone",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Phones"
+                ],
+                "summary": "Create a phone",
+                "parameters": [
+                    {
+                        "description": "the body to create a phone",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreatePhoneInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreatedPhoneResponse"
+                        }
+                    }
+                }
             }
         },
         "/phones/{phone_id}": {
@@ -152,7 +186,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Review"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Review"
+                            }
                         }
                     }
                 }
@@ -163,14 +200,14 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Create phone review by ID",
+                "description": "Create phone review by phone ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Phones"
                 ],
-                "summary": "Create a phone review by its ID",
+                "summary": "Create a phone review by phone ID",
                 "parameters": [
                     {
                         "type": "string",
@@ -190,8 +227,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.Review"
                         }
@@ -307,6 +344,36 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.CreatePhoneInput": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string",
+                    "x-order": "1",
+                    "example": "Samsung"
+                },
+                "model": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "Galaxy"
+                },
+                "release_date": {
+                    "type": "string",
+                    "x-order": "3",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "price": {
+                    "type": "integer",
+                    "x-order": "4",
+                    "example": 10000
+                },
+                "image_url": {
+                    "type": "string",
+                    "x-order": "5",
+                    "example": ""
+                }
+            }
+        },
         "controllers.CreateReviewInput": {
             "type": "object",
             "required": [
@@ -321,6 +388,52 @@ const docTemplate = `{
                 "review_text": {
                     "type": "string",
                     "example": "sample review text"
+                }
+            }
+        },
+        "controllers.CreatedPhoneResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "phone created successfully"
+                },
+                "phone": {
+                    "type": "object",
+                    "properties": {
+                        "phone_id": {
+                            "type": "integer",
+                            "x-order": "0",
+                            "example": 1
+                        },
+                        "brand": {
+                            "type": "string",
+                            "x-order": "1",
+                            "example": "Samsung"
+                        },
+                        "model": {
+                            "type": "string",
+                            "x-order": "2",
+                            "example": "Galaxy"
+                        },
+                        "release_date": {
+                            "type": "string",
+                            "x-order": "3",
+                            "example": "2023-01-01T00:00:00Z"
+                        },
+                        "price": {
+                            "type": "integer",
+                            "x-order": "4",
+                            "example": 10000
+                        },
+                        "image_url": {
+                            "type": "string",
+                            "x-order": "5",
+                            "example": ""
+                        }
+                    },
+                    "x-order": "1"
                 }
             }
         },
@@ -397,7 +510,7 @@ const docTemplate = `{
                 "release_date": {
                     "type": "string",
                     "x-order": "3",
-                    "example": "2023-11-11T00:00:00+07:00"
+                    "example": "2023-11-11"
                 },
                 "price": {
                     "type": "integer",
@@ -571,15 +684,15 @@ const docTemplate = `{
                     "type": "string",
                     "x-order": "4"
                 },
-                "created_at": {
-                    "type": "string",
-                    "x-order": "5"
-                },
                 "comments": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Comment"
                     },
+                    "x-order": "5"
+                },
+                "created_at": {
+                    "type": "string",
                     "x-order": "5"
                 },
                 "likes": {

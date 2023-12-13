@@ -3,16 +3,11 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"github.com/gin-gonic/gin"
-	// "golang.org/x/crypto/bcrypt"
-	// "github.com/golang-jwt/jwt"
-	// "github.com/joho/godotenv"
-	// "log"
-	// "time"
 
 	"golang-phone-review-api/models"
+
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	// "golang-phone-review-api/repositories"
 )
 
 type (

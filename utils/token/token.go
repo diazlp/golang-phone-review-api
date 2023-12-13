@@ -1,8 +1,8 @@
 package token
 
 import (
-	"golang-phone-review-api/utils"
 	"fmt"
+	"golang-phone-review-api/utils"
 	"strconv"
 	"strings"
 	"time"
@@ -13,7 +13,7 @@ import (
 
 var API_SECRET = utils.GetEnv("API_SECRET", "")
 
-func GenerateToken(user_id int) (string, error) {
+func GenerateToken(user_id int, user_role string) (string, error) {
 	token_lifespan, err := strconv.Atoi(utils.GetEnv("TOKEN_HOUR_LIFESPAN", "1"))
 
 	if err != nil {
@@ -23,6 +23,7 @@ func GenerateToken(user_id int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"authorized": true,
 		"user_id": user_id,
+		"user_role": user_role,
 		"exp": time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix(),
 	})
 
@@ -58,6 +59,7 @@ func TokenValid(c *gin.Context) error {
 		return fmt.Errorf("invalid token")
 	}
 
+	c.Set("user_role", claims["user_role"])
 	c.Set("user_id", claims["user_id"])
 	return nil
 }

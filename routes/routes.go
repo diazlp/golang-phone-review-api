@@ -7,7 +7,7 @@ import (
 	"golang-phone-review-api/controllers"
 	"golang-phone-review-api/middlewares"
 
-	swaggerFiles "github.com/swaggo/files" // swagger embed files
+	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
@@ -23,6 +23,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	phonesMiddlewareRoute := r.Group("/phones")
 	phonesMiddlewareRoute.Use(middlewares.JwtAuthMiddleware())
 	phonesMiddlewareRoute.POST("/:phone_id/reviews", controllers.CreateReviewForPhone)
+	phonesMiddlewareRoute.POST("/", controllers.CreatePhone)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

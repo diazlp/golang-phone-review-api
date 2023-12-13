@@ -56,6 +56,29 @@ definitions:
         example: change password success
         type: string
     type: object
+  controllers.CreatePhoneInput:
+    properties:
+      brand:
+        example: Samsung
+        type: string
+        x-order: "1"
+      image_url:
+        example: ""
+        type: string
+        x-order: "5"
+      model:
+        example: Galaxy
+        type: string
+        x-order: "2"
+      price:
+        example: 10000
+        type: integer
+        x-order: "4"
+      release_date:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+        x-order: "3"
+    type: object
   controllers.CreateReviewInput:
     properties:
       rating:
@@ -67,6 +90,41 @@ definitions:
     required:
     - rating
     - review_text
+    type: object
+  controllers.CreatedPhoneResponse:
+    properties:
+      message:
+        example: phone created successfully
+        type: string
+        x-order: "0"
+      phone:
+        properties:
+          brand:
+            example: Samsung
+            type: string
+            x-order: "1"
+          image_url:
+            example: ""
+            type: string
+            x-order: "5"
+          model:
+            example: Galaxy
+            type: string
+            x-order: "2"
+          phone_id:
+            example: 1
+            type: integer
+            x-order: "0"
+          price:
+            example: 10000
+            type: integer
+            x-order: "4"
+          release_date:
+            example: "2023-01-01T00:00:00Z"
+            type: string
+            x-order: "3"
+        type: object
+        x-order: "1"
     type: object
   controllers.LoginInput:
     properties:
@@ -129,7 +187,7 @@ definitions:
         type: integer
         x-order: "4"
       release_date:
-        example: "2023-11-11T00:00:00+07:00"
+        example: "2023-11-11"
         type: string
         x-order: "3"
       reviews:
@@ -320,6 +378,27 @@ paths:
       summary: List all phones
       tags:
       - Phones
+    post:
+      description: Create a phone
+      parameters:
+      - description: the body to create a phone
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreatePhoneInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/controllers.CreatedPhoneResponse'
+      security:
+      - Bearer: []
+      summary: Create a phone
+      tags:
+      - Phones
   /phones/{phone_id}:
     get:
       description: Get phone details by ID
@@ -354,12 +433,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Review'
+            items:
+              $ref: '#/definitions/models.Review'
+            type: array
       summary: Get all phone reviews by its ID
       tags:
       - Phones
     post:
-      description: Create phone review by ID
+      description: Create phone review by phone ID
       parameters:
       - description: PhoneID
         in: path
@@ -375,13 +456,13 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/models.Review'
       security:
       - Bearer: []
-      summary: Create a phone review by its ID
+      summary: Create a phone review by phone ID
       tags:
       - Phones
   /register:

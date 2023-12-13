@@ -4,11 +4,11 @@ import (
 	"html"
 	"strings"
 	"time"
-	
+
 	"golang-phone-review-api/utils/token"
 
 	"golang.org/x/crypto/bcrypt"
-  "gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type (
@@ -43,7 +43,7 @@ func LoginCheck(username string, password string, db *gorm.DB) (string, error) {
 		return "", err
 	}
 
-	token, err := token.GenerateToken(u.UserID)
+	token, err := token.GenerateToken(u.UserID, u.Role)
 	if err != nil {
 		return "", err
 	}
