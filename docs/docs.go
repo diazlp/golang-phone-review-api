@@ -77,6 +77,128 @@ const docTemplate = `{
                 }
             }
         },
+        "/phones": {
+            "get": {
+                "description": "Get a list of Phones",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Phones"
+                ],
+                "summary": "List all phones",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.AllPhoneResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/phones/{phone_id}": {
+            "get": {
+                "description": "Get phone details by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Phones"
+                ],
+                "summary": "Get phone details by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PhoneID",
+                        "name": "phone_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.PhoneByIDResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/phones/{phone_id}/reviews": {
+            "get": {
+                "description": "Get all phone reviews by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Phones"
+                ],
+                "summary": "Get all phone reviews by its ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PhoneID",
+                        "name": "phone_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Review"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create phone review by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Phones"
+                ],
+                "summary": "Create a phone review by its ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "PhoneID",
+                        "name": "phone_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to create phone review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateReviewInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Review"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "registering a user from public access.",
@@ -110,6 +232,41 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.AllPhoneResponse": {
+            "type": "object",
+            "properties": {
+                "phone_id": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "brand": {
+                    "type": "string",
+                    "x-order": "1",
+                    "example": "Samsung"
+                },
+                "model": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "Galaxy"
+                },
+                "release_date": {
+                    "type": "string",
+                    "x-order": "3",
+                    "example": "2023-11-11T00:00:00+07:00"
+                },
+                "price": {
+                    "type": "integer",
+                    "x-order": "4",
+                    "example": 10000
+                },
+                "image_url": {
+                    "type": "string",
+                    "x-order": "5",
+                    "example": ""
+                }
+            }
+        },
         "controllers.ChangePasswordInput": {
             "type": "object",
             "required": [
@@ -147,6 +304,23 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "change password success"
+                }
+            }
+        },
+        "controllers.CreateReviewInput": {
+            "type": "object",
+            "required": [
+                "rating",
+                "review_text"
+            ],
+            "properties": {
+                "rating": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "review_text": {
+                    "type": "string",
+                    "example": "sample review text"
                 }
             }
         },
@@ -202,6 +376,48 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.PhoneByIDResponse": {
+            "type": "object",
+            "properties": {
+                "phone_id": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "brand": {
+                    "type": "string",
+                    "x-order": "1",
+                    "example": "Samsung"
+                },
+                "model": {
+                    "type": "string",
+                    "x-order": "2",
+                    "example": "Galaxy"
+                },
+                "release_date": {
+                    "type": "string",
+                    "x-order": "3",
+                    "example": "2023-11-11T00:00:00+07:00"
+                },
+                "price": {
+                    "type": "integer",
+                    "x-order": "4",
+                    "example": 10000
+                },
+                "image_url": {
+                    "type": "string",
+                    "x-order": "5",
+                    "example": ""
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.ReviewResponse"
+                    },
+                    "x-order": "6"
+                }
+            }
+        },
         "controllers.RegisterInput": {
             "type": "object",
             "required": [
@@ -250,7 +466,7 @@ const docTemplate = `{
                         },
                         "role": {
                             "type": "string",
-                            "example": "user"
+                            "example": "Admin"
                         },
                         "username": {
                             "type": "string",
@@ -260,6 +476,128 @@ const docTemplate = `{
                     "x-order": "1"
                 }
             }
+        },
+        "controllers.ReviewResponse": {
+            "type": "object",
+            "properties": {
+                "phone_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "rating": {
+                    "type": "integer",
+                    "example": 9
+                },
+                "review_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "review_text": {
+                    "type": "string",
+                    "example": "product is nice"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "models.Comment": {
+            "type": "object",
+            "properties": {
+                "comment_id": {
+                    "type": "integer"
+                },
+                "comment_text": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "likes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Like"
+                    }
+                },
+                "review_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Like": {
+            "type": "object",
+            "properties": {
+                "comment_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "like_id": {
+                    "type": "integer"
+                },
+                "review_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Review": {
+            "type": "object",
+            "properties": {
+                "review_id": {
+                    "type": "integer",
+                    "x-order": "0"
+                },
+                "phone_id": {
+                    "type": "integer",
+                    "x-order": "1"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "x-order": "2"
+                },
+                "rating": {
+                    "type": "integer",
+                    "x-order": "3"
+                },
+                "review_text": {
+                    "type": "string",
+                    "x-order": "4"
+                },
+                "created_at": {
+                    "type": "string",
+                    "x-order": "5"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    },
+                    "x-order": "5"
+                },
+                "likes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Like"
+                    },
+                    "x-order": "6"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

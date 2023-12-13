@@ -7,6 +7,11 @@ import (
 	"golang-phone-review-api/docs"
 )
 
+// @securityDefinitions.apiKey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
+
 func main() {
 	// Set up Swagger Info
 	docs.SwaggerInfo.Title = "Swagger Example API"

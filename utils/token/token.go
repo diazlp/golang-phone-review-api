@@ -43,7 +43,7 @@ func ExtractToken(c *gin.Context) string {
 
 func TokenValid(c *gin.Context) error {
 	tokenString := ExtractToken(c)
-	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -52,6 +52,13 @@ func TokenValid(c *gin.Context) error {
 	if err != nil {
 		return err
 	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	c.Set("user_id", claims["user_id"])
 	return nil
 }
 
