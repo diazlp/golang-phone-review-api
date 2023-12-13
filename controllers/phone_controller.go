@@ -236,7 +236,7 @@ func CreatePhone(c *gin.Context) {
 
 	userRole, _ := c.Get("user_role")
 	if userRole != "Admin" {
-			c.JSON(http.StatusForbidden, gin.H{"forbidden": `User does not have "Admin" role`})
+			c.JSON(http.StatusForbidden, gin.H{"forbidden": `User does not have "Admin" role to create phone`})
 			return
 	}
 

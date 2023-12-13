@@ -266,6 +266,147 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/reviews": {
+            "get": {
+                "description": "Get a list of Reviews",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "List all reviews",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.AllReviewResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews/{review_id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update a review",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Update a review",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReviewID",
+                        "name": "review_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to edit phone review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EditReviewInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EditReviewResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a review",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Delete a review",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReviewID",
+                        "name": "review_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.DeleteReviewResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews/{review_id}/comment": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a review comment by review ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Create a review comment by review ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReviewID",
+                        "name": "review_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to create phone review",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateCommentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateCommentResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -301,6 +442,49 @@ const docTemplate = `{
                     "type": "string",
                     "x-order": "5",
                     "example": ""
+                }
+            }
+        },
+        "controllers.AllReviewResponse": {
+            "type": "object",
+            "properties": {
+                "review_id": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "phone_id": {
+                    "type": "integer",
+                    "x-order": "1",
+                    "example": 1
+                },
+                "user_id": {
+                    "type": "integer",
+                    "x-order": "3",
+                    "example": 1
+                },
+                "rating": {
+                    "type": "integer",
+                    "x-order": "4",
+                    "example": 1
+                },
+                "review_text": {
+                    "type": "string",
+                    "x-order": "5",
+                    "example": "this is sample text"
+                },
+                "created_at": {
+                    "type": "string",
+                    "x-order": "6",
+                    "example": ""
+                },
+                "phone": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/controllers.PhoneResponse"
+                        }
+                    ],
+                    "x-order:2": true
                 }
             }
         },
@@ -341,6 +525,36 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "change password success"
+                }
+            }
+        },
+        "controllers.CreateCommentInput": {
+            "type": "object",
+            "required": [
+                "comment_text"
+            ],
+            "properties": {
+                "comment_text": {
+                    "type": "string",
+                    "example": "this review is rigged!"
+                }
+            }
+        },
+        "controllers.CreateCommentResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "comment created successfully"
+                },
+                "comments": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.Comment"
+                        }
+                    ],
+                    "x-order": "1"
                 }
             }
         },
@@ -437,6 +651,46 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.DeleteReviewResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "review deleted successfully"
+                }
+            }
+        },
+        "controllers.EditReviewInput": {
+            "type": "object",
+            "properties": {
+                "rating": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "review_text": {
+                    "type": "string",
+                    "example": "sample review text"
+                }
+            }
+        },
+        "controllers.EditReviewResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "review updated successfully"
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Review"
+                    },
+                    "x-order": "1"
+                }
+            }
+        },
         "controllers.LoginInput": {
             "type": "object",
             "required": [
@@ -528,6 +782,35 @@ const docTemplate = `{
                         "$ref": "#/definitions/controllers.ReviewResponse"
                     },
                     "x-order": "6"
+                }
+            }
+        },
+        "controllers.PhoneResponse": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string",
+                    "example": "Samsung"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": ""
+                },
+                "model": {
+                    "type": "string",
+                    "example": "Galaxy"
+                },
+                "phone_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "price": {
+                    "type": "integer",
+                    "example": 10000
+                },
+                "release_date": {
+                    "type": "string",
+                    "example": "2023-11-11"
                 }
             }
         },

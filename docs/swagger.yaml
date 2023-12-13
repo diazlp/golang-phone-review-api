@@ -26,6 +26,37 @@ definitions:
         type: string
         x-order: "3"
     type: object
+  controllers.AllReviewResponse:
+    properties:
+      created_at:
+        example: ""
+        type: string
+        x-order: "6"
+      phone:
+        allOf:
+        - $ref: '#/definitions/controllers.PhoneResponse'
+        x-order:2: true
+      phone_id:
+        example: 1
+        type: integer
+        x-order: "1"
+      rating:
+        example: 1
+        type: integer
+        x-order: "4"
+      review_id:
+        example: 1
+        type: integer
+        x-order: "0"
+      review_text:
+        example: this is sample text
+        type: string
+        x-order: "5"
+      user_id:
+        example: 1
+        type: integer
+        x-order: "3"
+    type: object
   controllers.ChangePasswordInput:
     properties:
       confirm_new_password:
@@ -55,6 +86,25 @@ definitions:
       message:
         example: change password success
         type: string
+    type: object
+  controllers.CreateCommentInput:
+    properties:
+      comment_text:
+        example: this review is rigged!
+        type: string
+    required:
+    - comment_text
+    type: object
+  controllers.CreateCommentResponse:
+    properties:
+      comments:
+        allOf:
+        - $ref: '#/definitions/models.Comment'
+        x-order: "1"
+      message:
+        example: comment created successfully
+        type: string
+        x-order: "0"
     type: object
   controllers.CreatePhoneInput:
     properties:
@@ -126,6 +176,34 @@ definitions:
         type: object
         x-order: "1"
     type: object
+  controllers.DeleteReviewResponse:
+    properties:
+      message:
+        example: review deleted successfully
+        type: string
+        x-order: "0"
+    type: object
+  controllers.EditReviewInput:
+    properties:
+      rating:
+        example: 1
+        type: integer
+      review_text:
+        example: sample review text
+        type: string
+    type: object
+  controllers.EditReviewResponse:
+    properties:
+      message:
+        example: review updated successfully
+        type: string
+        x-order: "0"
+      reviews:
+        items:
+          $ref: '#/definitions/models.Review'
+        type: array
+        x-order: "1"
+    type: object
   controllers.LoginInput:
     properties:
       password:
@@ -195,6 +273,27 @@ definitions:
           $ref: '#/definitions/controllers.ReviewResponse'
         type: array
         x-order: "6"
+    type: object
+  controllers.PhoneResponse:
+    properties:
+      brand:
+        example: Samsung
+        type: string
+      image_url:
+        example: ""
+        type: string
+      model:
+        example: Galaxy
+        type: string
+      phone_id:
+        example: 1
+        type: integer
+      price:
+        example: 10000
+        type: integer
+      release_date:
+        example: "2023-11-11"
+        type: string
     type: object
   controllers.RegisterInput:
     properties:
@@ -485,6 +584,95 @@ paths:
       summary: Register a user.
       tags:
       - Auth
+  /reviews:
+    get:
+      description: Get a list of Reviews
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AllReviewResponse'
+            type: array
+      summary: List all reviews
+      tags:
+      - Reviews
+  /reviews/{review_id}:
+    delete:
+      description: Delete a review
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.DeleteReviewResponse'
+      security:
+      - Bearer: []
+      summary: Delete a review
+      tags:
+      - Reviews
+    put:
+      description: Update a review
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: string
+      - description: the body to edit phone review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.EditReviewInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.EditReviewResponse'
+      security:
+      - Bearer: []
+      summary: Update a review
+      tags:
+      - Reviews
+  /reviews/{review_id}/comment:
+    post:
+      description: Create a review comment by review ID
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: string
+      - description: the body to create phone review
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateCommentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CreateCommentResponse'
+      security:
+      - Bearer: []
+      summary: Create a review comment by review ID
+      tags:
+      - Reviews
 securityDefinitions:
   Bearer:
     description: Type "Bearer" followed by a space and JWT token.
