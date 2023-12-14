@@ -365,7 +365,37 @@ const docTemplate = `{
                 }
             }
         },
-        "/reviews/{review_id}/comment": {
+        "/reviews/{review_id}/comments": {
+            "get": {
+                "description": "Get all review comment by review ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get all review comment by review ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReviewID",
+                        "name": "review_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Comment"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -403,6 +433,70 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/controllers.CreateCommentResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews/{review_id}/likes": {
+            "get": {
+                "description": "Get all review likes by review ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get all review likes by review ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReviewID",
+                        "name": "review_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Like"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a review like by review ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Create a review like by review ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ReviewID",
+                        "name": "review_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateLikeResponse"
                         }
                     }
                 }
@@ -555,6 +649,16 @@ const docTemplate = `{
                         }
                     ],
                     "x-order": "1"
+                }
+            }
+        },
+        "controllers.CreateLikeResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "like created successfully"
                 }
             }
         },
@@ -902,13 +1006,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comment_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "comment_text": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "sample comment text"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2030-01-01 00:00:00"
                 },
                 "likes": {
                     "type": "array",
@@ -917,10 +1024,12 @@ const docTemplate = `{
                     }
                 },
                 "review_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -928,19 +1037,24 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comment_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2030-01-01 00:00:00"
                 },
                 "like_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "review_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -949,33 +1063,39 @@ const docTemplate = `{
             "properties": {
                 "review_id": {
                     "type": "integer",
-                    "x-order": "0"
+                    "x-order": "0",
+                    "example": 1
                 },
                 "phone_id": {
                     "type": "integer",
-                    "x-order": "1"
+                    "x-order": "1",
+                    "example": 1
                 },
                 "user_id": {
                     "type": "integer",
-                    "x-order": "2"
+                    "x-order": "2",
+                    "example": 1
                 },
                 "rating": {
                     "type": "integer",
-                    "x-order": "3"
+                    "x-order": "3",
+                    "example": 8
                 },
                 "review_text": {
                     "type": "string",
-                    "x-order": "4"
+                    "x-order": "4",
+                    "example": "sample review text"
+                },
+                "created_at": {
+                    "type": "string",
+                    "x-order": "5",
+                    "example": "2030-01-01 00:00:00"
                 },
                 "comments": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Comment"
                     },
-                    "x-order": "5"
-                },
-                "created_at": {
-                    "type": "string",
                     "x-order": "5"
                 },
                 "likes": {

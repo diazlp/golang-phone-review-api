@@ -58,11 +58,10 @@ type(
 		Comment models.Comment `json:"comments" extensions:"x-order=1"`
 	}
 
-	/*get all review comments by review id*/
-
 	/*like a review*/
-
-	/*get all review likes by review id*/
+	CreateLikeResponse struct {
+		Message string `json:"message" example:"like created successfully" extensions:"x-order=0"`
+	}
 )
 
 // @Summary List all reviews
@@ -194,7 +193,7 @@ func DeleteReview(c *gin.Context) {
 // @Param Body body CreateCommentInput true "the body to create phone review"
 // @Security Bearer
 // @Success 200 {object} CreateCommentResponse
-// @Router /reviews/{review_id}/comment [post]
+// @Router /reviews/{review_id}/comments [post]
 func CreateReviewComment(c *gin.Context) {
 	var input CreateCommentInput
 	db := c.MustGet("db").(*gorm.DB)
@@ -239,6 +238,100 @@ func CreateReviewComment(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "comment created successfully", "comment": comment})
 }
 
-	// reviewsMiddlewareRoute.GET("/:review_id/comment", controllers.GetReviewComments)
-	// reviewsMiddlewareRoute.POST("/:review_id/likes", controllers.CreateReviewLike)
-	// reviewsMiddlewareRoute.GET("/:review_id/likes", controllers.GetReviewLikes)
+// @Summary Get all review comment by review ID
+// @Description Get all review comment by review ID
+// @Tags Reviews
+// @Produce json
+// @Param review_id path string true "ReviewID"
+// @Success 200 {object} []models.Comment
+// @Router /reviews/{review_id}/comments [get]
+func GetReviewComments(c *gin.Context) {
+	var comments []models.Comment
+	db := c.MustGet("db").(*gorm.DB)
+	reviewID := c.Param("review_id")
+
+	var existingReview models.Review
+	if err := db.First(&existingReview, reviewID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Review not found"})
+		return
+	}
+
+	if err := db.Where("review_id= ?", reviewID).Find(&comments).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch review comments"})
+		return
+	}
+
+	c.JSON(http.StatusOK, comments)
+}
+	
+// @Summary Create a review like by review ID
+// @Description Create a review like by review ID
+// @Tags Reviews
+// @Produce json
+// @Param review_id path string true "ReviewID"
+// @Security Bearer
+// @Success 201 {object} CreateLikeResponse
+// @Router /reviews/{review_id}/likes [post]
+func CreateReviewLike(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	reviewID := c.Param("review_id")
+
+	var existingReview models.Review
+	if err := db.First(&existingReview, reviewID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Review not found"})
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+			return
+	}
+
+	userRole, _ := c.Get("user_role")
+	if userRole != "Guest" {
+			c.JSON(http.StatusForbidden, gin.H{"forbidden": `User does not have "Guest" role to like a review`})
+			return
+	}
+
+	parsedReviewID, _ := strconv.Atoi(reviewID)
+	like := models.Like{
+		ReviewID: &parsedReviewID,
+		UserID: int(userID.(float64)),
+		CreatedAt: time.Now(),
+	}
+
+	if err := db.Create(&like).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to like a review"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "like created successfully"})
+}
+
+
+// @Summary Get all review likes by review ID
+// @Description Get all review likes by review ID
+// @Tags Reviews
+// @Produce json
+// @Param review_id path string true "ReviewID"
+// @Success 200 {object} []models.Like
+// @Router /reviews/{review_id}/likes [get]
+func GetReviewLike(c *gin.Context) {
+var likes []models.Like
+db := c.MustGet("db").(*gorm.DB)
+reviewID := c.Param("review_id")
+
+var existingReview models.Review
+if err := db.First(&existingReview, reviewID).Error; err != nil {
+	c.JSON(http.StatusBadRequest, gin.H{"error": "Review not found"})
+	return
+}
+
+if err := db.Where("review_id= ?", reviewID).Find(&likes).Error; err != nil {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch review comments"})
+	return
+}
+
+c.JSON(http.StatusOK, likes)
+}

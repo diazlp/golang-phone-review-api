@@ -106,6 +106,13 @@ definitions:
         type: string
         x-order: "0"
     type: object
+  controllers.CreateLikeResponse:
+    properties:
+      message:
+        example: like created successfully
+        type: string
+        x-order: "0"
+    type: object
   controllers.CreatePhoneInput:
     properties:
       brand:
@@ -360,31 +367,41 @@ definitions:
   models.Comment:
     properties:
       comment_id:
+        example: 1
         type: integer
       comment_text:
+        example: sample comment text
         type: string
       created_at:
+        example: "2030-01-01 00:00:00"
         type: string
       likes:
         items:
           $ref: '#/definitions/models.Like'
         type: array
       review_id:
+        example: 1
         type: integer
       user_id:
+        example: 1
         type: integer
     type: object
   models.Like:
     properties:
       comment_id:
+        example: 1
         type: integer
       created_at:
+        example: "2030-01-01 00:00:00"
         type: string
       like_id:
+        example: 1
         type: integer
       review_id:
+        example: 1
         type: integer
       user_id:
+        example: 1
         type: integer
     type: object
   models.Review:
@@ -395,6 +412,7 @@ definitions:
         type: array
         x-order: "5"
       created_at:
+        example: "2030-01-01 00:00:00"
         type: string
         x-order: "5"
       likes:
@@ -403,18 +421,23 @@ definitions:
         type: array
         x-order: "6"
       phone_id:
+        example: 1
         type: integer
         x-order: "1"
       rating:
+        example: 8
         type: integer
         x-order: "3"
       review_id:
+        example: 1
         type: integer
         x-order: "0"
       review_text:
+        example: sample review text
         type: string
         x-order: "4"
       user_id:
+        example: 1
         type: integer
         x-order: "2"
     type: object
@@ -646,7 +669,27 @@ paths:
       summary: Update a review
       tags:
       - Reviews
-  /reviews/{review_id}/comment:
+  /reviews/{review_id}/comments:
+    get:
+      description: Get all review comment by review ID
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Comment'
+            type: array
+      summary: Get all review comment by review ID
+      tags:
+      - Reviews
     post:
       description: Create a review comment by review ID
       parameters:
@@ -671,6 +714,47 @@ paths:
       security:
       - Bearer: []
       summary: Create a review comment by review ID
+      tags:
+      - Reviews
+  /reviews/{review_id}/likes:
+    get:
+      description: Get all review likes by review ID
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Like'
+            type: array
+      summary: Get all review likes by review ID
+      tags:
+      - Reviews
+    post:
+      description: Create a review like by review ID
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/controllers.CreateLikeResponse'
+      security:
+      - Bearer: []
+      summary: Create a review like by review ID
       tags:
       - Reviews
 securityDefinitions:
