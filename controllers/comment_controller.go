@@ -12,6 +12,16 @@ import (
 )
 
 type(
+	/*general comment response*/
+	CommentResponse struct {
+		CommentID   int      	`json:"comment_id" example:"1"`
+		ReviewID  	int      	`json:"review_id" example:"1"`
+		UserID    	int      	`json:"user_id" example:"1"`
+		CommentText string    `json:"comment_text" example:"sample comment text"`
+		CreatedAt 	time.Time `json:"created_at" example:"2030-01-01 00:00:00"`
+		TotalLikes	int 			`json:"total_likes" example:"10"`
+	}
+
 	/*find-all comment*/
 	AllCommentResponse struct {
 		CommentID   int      	`json:"comment_id" example:"1"`
@@ -19,7 +29,7 @@ type(
 		Review      ReviewResponse `json:"review,omitempty" extensions:"x-order:2"`
 		UserID    	int      	`json:"user_id" example:"1" extensions:"x-order=3"`
 		CommentText string    `json:"comment_text" example:"sample comment text"`
-		CreatedAt 	time.Time `json:"created_at" example:"" extensions:"x-order=6"`
+		CreatedAt 	time.Time `json:"created_at" example:"2030-01-01 00:00:00" extensions:"x-order=6"`
 	}
 
 	/*update comment*/

@@ -205,6 +205,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/likes": {
+            "get": {
+                "description": "Get a list of likes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "List all likes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.AllLikeResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/likes/{like_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a like",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Delete a like",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "LikeID",
+                        "name": "like_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.DeleteLikeResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Logging in to get jwt token to access admin or user api by roles.",
@@ -676,7 +733,7 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string",
                     "x-order": "6",
-                    "example": ""
+                    "example": "2030-01-01 00:00:00"
                 },
                 "comment_id": {
                     "type": "integer",
@@ -693,6 +750,52 @@ const docTemplate = `{
                         }
                     ],
                     "x-order:2": true
+                }
+            }
+        },
+        "controllers.AllLikeResponse": {
+            "type": "object",
+            "properties": {
+                "like_id": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "review_id": {
+                    "type": "integer",
+                    "x-order": "1",
+                    "example": 1
+                },
+                "review": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/controllers.ReviewResponse"
+                        }
+                    ],
+                    "x-order": "2"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "x-order": "3",
+                    "example": 1
+                },
+                "comment_id": {
+                    "type": "integer",
+                    "x-order": "4",
+                    "example": 1
+                },
+                "comment": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/controllers.CommentResponse"
+                        }
+                    ],
+                    "x-order": "5"
+                },
+                "created_at": {
+                    "type": "string",
+                    "x-order": "6",
+                    "example": "2030-01-01 00:00:00"
                 }
             }
         },
@@ -762,7 +865,7 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string",
                     "x-order": "6",
-                    "example": ""
+                    "example": "2030-01-01 00:00:00"
                 },
                 "phone": {
                     "allOf": [
@@ -811,6 +914,35 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "change password success"
+                }
+            }
+        },
+        "controllers.CommentResponse": {
+            "type": "object",
+            "properties": {
+                "comment_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "comment_text": {
+                    "type": "string",
+                    "example": "sample comment text"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2030-01-01 00:00:00"
+                },
+                "review_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "total_likes": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -954,6 +1086,16 @@ const docTemplate = `{
                     "type": "string",
                     "x-order": "0",
                     "example": "comment deleted successfully"
+                }
+            }
+        },
+        "controllers.DeleteLikeResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "like deleted successfully"
                 }
             }
         },
@@ -1379,7 +1521,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "Bearer": {
-            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "description": "Type \"Bearer\" followed by a space and JWT token (for example: \"Bearer eyxyz\").",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

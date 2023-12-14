@@ -39,7 +39,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	reviewsMiddlewareRoute.POST("/:review_id/likes", controllers.CreateReviewLike)
 
 	/*Comment Endpoints*/
-	r.GET("/comments", controllers.GetAllComments)
+r.GET("/comments", controllers.GetAllComments)
 	r.GET("/comments/:comment_id/likes", controllers.GetCommentLike)
 
 	commentsMiddlewareRoute := r.Group("/comments")
@@ -47,6 +47,13 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	commentsMiddlewareRoute.PUT("/:comment_id", controllers.EditComment)
 	commentsMiddlewareRoute.DELETE("/:comment_id", controllers.DeleteComment)
 	commentsMiddlewareRoute.POST("/:comment_id/likes", controllers.CreateCommentLike)
+
+	/*Like Endpoints*/
+	r.GET("/likes", controllers.GetAllLikes)
+
+	LikesMiddlewareRoute := r.Group("/likes")
+	LikesMiddlewareRoute.Use(middlewares.JwtAuthMiddleware())
+	LikesMiddlewareRoute.DELETE("/:like_id", controllers.DeleteLike)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

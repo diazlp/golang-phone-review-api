@@ -3,14 +3,14 @@ package main
 import (
 	"golang-phone-review-api/configs"
 	// "github.com/gin-gonic/gin"
-	"golang-phone-review-api/routes"
 	"golang-phone-review-api/docs"
+	"golang-phone-review-api/routes"
 )
 
 // @securityDefinitions.apiKey Bearer
 // @in header
 // @name Authorization
-// @description Type "Bearer" followed by a space and JWT token.
+// @description Type "Bearer" followed by a space and JWT token (for example: "Bearer eyxyz").
 
 func main() {
 	// Set up Swagger Info

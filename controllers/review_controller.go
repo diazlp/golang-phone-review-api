@@ -12,6 +12,16 @@ import (
 )
 
 type(
+	/*general review response*/
+	ReviewResponse struct {
+		ReviewID  	int      	`json:"review_id" example:"1"`
+		PhoneID   	int      	`json:"phone_id" example:"1"`
+		UserID    	int      	`json:"user_id" example:"1"`
+		Rating    	int      	`json:"rating" example:"9"`
+		ReviewText 	string    `json:"review_text" example:"product is nice"`
+		TotalLikes  int				`json:"total_likes" example:"10"`
+	}
+
 	/*find-all review*/
 	AllReviewResponse struct {
 		ReviewID  	int      	`json:"review_id" example:"1" extensions:"x-order=0"`
@@ -20,7 +30,7 @@ type(
 		UserID    	int      	`json:"user_id" example:"1" extensions:"x-order=3"`
 		Rating    	int      	`json:"rating" example:"1" extensions:"x-order=4"`
 		ReviewText 	string    `json:"review_text" example:"this is sample text" extensions:"x-order=5"`
-		CreatedAt 	time.Time `json:"created_at" example:"" extensions:"x-order=6"`
+		CreatedAt 	time.Time `json:"created_at" example:"2030-01-01 00:00:00" extensions:"x-order=6"`
 	}
 
 	PhoneResponse struct {

@@ -31,15 +31,6 @@ type (
 		Reviews 		[]ReviewResponse	`json:"reviews" extensions:"x-order=6"`
 	}
 
-	ReviewResponse struct {
-		ReviewID  	int      	`json:"review_id" example:"1"`
-		PhoneID   	int      	`json:"phone_id" example:"1"`
-		UserID    	int      	`json:"user_id" example:"1"`
-		Rating    	int      	`json:"rating" example:"9"`
-		ReviewText 	string    `json:"review_text" example:"product is nice"`
-		TotalLikes  int				`json:"total_likes" example:"10"`
-	}
-
 	CreateReviewInput struct {
 		Rating      int   `json:"rating" binding:"required" example:"1"`
     ReviewText  string `json:"review_text" binding:"required" example:"sample review text"`	
