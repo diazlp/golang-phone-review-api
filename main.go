@@ -2,7 +2,6 @@ package main
 
 import (
 	"golang-phone-review-api/configs"
-	// "github.com/gin-gonic/gin"
 	"golang-phone-review-api/docs"
 	"golang-phone-review-api/routes"
 )
