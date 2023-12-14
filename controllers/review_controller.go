@@ -62,6 +62,12 @@ type(
 	CreateLikeResponse struct {
 		Message string `json:"message" example:"like created successfully" extensions:"x-order=0"`
 	}
+
+	/*get review likes*/
+	GetReviewLikesResponse struct {
+		Count		int 	`json:"count" example:"1" extensions:"x-order=0"`
+		Rows		[]models.Like 	`json:"rows,omitempty" extensions:"x-order=1"`
+	}
 )
 
 // @Summary List all reviews
@@ -75,7 +81,7 @@ func GetAllReviews(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
 	if err := db.Find(&reviews).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch phones"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews"})
 		return
 	}
 
@@ -315,7 +321,7 @@ func CreateReviewLike(c *gin.Context) {
 // @Tags Reviews
 // @Produce json
 // @Param review_id path string true "ReviewID"
-// @Success 200 {object} []models.Like
+// @Success 200 {object} GetReviewLikesResponse
 // @Router /reviews/{review_id}/likes [get]
 func GetReviewLike(c *gin.Context) {
 var likes []models.Like
@@ -329,9 +335,9 @@ if err := db.First(&existingReview, reviewID).Error; err != nil {
 }
 
 if err := db.Where("review_id= ?", reviewID).Find(&likes).Error; err != nil {
-	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch review comments"})
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch review likes"})
 	return
 }
 
-c.JSON(http.StatusOK, likes)
+c.JSON(http.StatusOK, gin.H{"count": len(likes), "rows": likes})
 }

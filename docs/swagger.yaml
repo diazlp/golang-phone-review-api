@@ -1,4 +1,29 @@
 definitions:
+  controllers.AllCommentResponse:
+    properties:
+      comment_id:
+        example: 1
+        type: integer
+      comment_text:
+        example: sample comment text
+        type: string
+      created_at:
+        example: ""
+        type: string
+        x-order: "6"
+      review:
+        allOf:
+        - $ref: '#/definitions/controllers.ReviewResponse'
+        x-order:2: true
+      review_id:
+        example: 1
+        type: integer
+        x-order: "0"
+      user_id:
+        example: 1
+        type: integer
+        x-order: "3"
+    type: object
   controllers.AllPhoneResponse:
     properties:
       brand:
@@ -183,10 +208,37 @@ definitions:
         type: object
         x-order: "1"
     type: object
+  controllers.DeleteCommentResponse:
+    properties:
+      message:
+        example: comment deleted successfully
+        type: string
+        x-order: "0"
+    type: object
   controllers.DeleteReviewResponse:
     properties:
       message:
         example: review deleted successfully
+        type: string
+        x-order: "0"
+    type: object
+  controllers.EditCommentInput:
+    properties:
+      comment_text:
+        example: sample comment text
+        type: string
+    required:
+    - comment_text
+    type: object
+  controllers.EditCommentResponse:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+        x-order: "1"
+      message:
+        example: comment updated successfully
         type: string
         x-order: "0"
     type: object
@@ -208,6 +260,30 @@ definitions:
       reviews:
         items:
           $ref: '#/definitions/models.Review'
+        type: array
+        x-order: "1"
+    type: object
+  controllers.GetCommentLikeResponse:
+    properties:
+      count:
+        example: 1
+        type: integer
+        x-order: "0"
+      rows:
+        items:
+          $ref: '#/definitions/models.Like'
+        type: array
+        x-order: "1"
+    type: object
+  controllers.GetReviewLikesResponse:
+    properties:
+      count:
+        example: 1
+        type: integer
+        x-order: "0"
+      rows:
+        items:
+          $ref: '#/definitions/models.Like'
         type: array
         x-order: "1"
     type: object
@@ -360,6 +436,9 @@ definitions:
       review_text:
         example: product is nice
         type: string
+      total_likes:
+        example: 10
+        type: integer
       user_id:
         example: 1
         type: integer
@@ -465,6 +544,107 @@ paths:
       summary: Change user password.
       tags:
       - Auth
+  /comments:
+    get:
+      description: Get a list of comments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AllCommentResponse'
+            type: array
+      summary: List all comments
+      tags:
+      - Comments
+  /comments/{comment_id}:
+    delete:
+      description: Delete a comment
+      parameters:
+      - description: CommentID
+        in: path
+        name: comment_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.DeleteCommentResponse'
+      security:
+      - Bearer: []
+      summary: Delete a comment
+      tags:
+      - Comments
+    put:
+      description: Update a comment
+      parameters:
+      - description: CommentID
+        in: path
+        name: comment_id
+        required: true
+        type: string
+      - description: the body to edit review comment
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.EditCommentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.EditCommentResponse'
+      security:
+      - Bearer: []
+      summary: Update a comment
+      tags:
+      - Comments
+  /comments/{comment_id}/likes:
+    get:
+      description: Get all comment likes by comment ID
+      parameters:
+      - description: CommentID
+        in: path
+        name: comment_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetCommentLikeResponse'
+      summary: Get all comment likes by comment ID
+      tags:
+      - Comments
+    post:
+      description: Create a comment like by comment ID
+      parameters:
+      - description: CommentID
+        in: path
+        name: comment_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/controllers.CreateLikeResponse'
+      security:
+      - Bearer: []
+      summary: Create a comment like by comment ID
+      tags:
+      - Comments
   /login:
     post:
       description: Logging in to get jwt token to access admin or user api by roles.
@@ -731,9 +911,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Like'
-            type: array
+            $ref: '#/definitions/controllers.GetReviewLikesResponse'
       summary: Get all review likes by review ID
       tags:
       - Reviews

@@ -37,6 +37,7 @@ type (
 		UserID    	int      	`json:"user_id" example:"1"`
 		Rating    	int      	`json:"rating" example:"9"`
 		ReviewText 	string    `json:"review_text" example:"product is nice"`
+		TotalLikes  int				`json:"total_likes" example:"10"`
 	}
 
 	CreateReviewInput struct {
@@ -114,7 +115,7 @@ func GetPhoneByID(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	phoneID := c.Param("phone_id")
 
-	if err := db.Preload("Reviews").First(&phone, phoneID).Error; err != nil {
+	if err := db.Preload("Reviews").Preload("Reviews.Likes").First(&phone, phoneID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Phone not found"})
 		return
 	}
@@ -136,6 +137,7 @@ func GetPhoneByID(c *gin.Context) {
 				UserID:     review.UserID,
 				Rating:     review.Rating,
 				ReviewText: review.ReviewText,
+				TotalLikes: len(review.Likes),
 		}
 	}
 	r.Reviews = reviews

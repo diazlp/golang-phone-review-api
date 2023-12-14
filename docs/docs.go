@@ -46,6 +46,165 @@ const docTemplate = `{
                 }
             }
         },
+        "/comments": {
+            "get": {
+                "description": "Get a list of comments",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "List all comments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.AllCommentResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/comments/{comment_id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update a comment",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update a comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CommentID",
+                        "name": "comment_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to edit review comment",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EditCommentInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.EditCommentResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete a comment",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete a comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CommentID",
+                        "name": "comment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.DeleteCommentResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/comments/{comment_id}/likes": {
+            "get": {
+                "description": "Get all comment likes by comment ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get all comment likes by comment ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CommentID",
+                        "name": "comment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GetCommentLikeResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Create a comment like by comment ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create a comment like by comment ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CommentID",
+                        "name": "comment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateLikeResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Logging in to get jwt token to access admin or user api by roles.",
@@ -461,10 +620,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Like"
-                            }
+                            "$ref": "#/definitions/controllers.GetReviewLikesResponse"
                         }
                     }
                 }
@@ -504,6 +660,42 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.AllCommentResponse": {
+            "type": "object",
+            "properties": {
+                "review_id": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "user_id": {
+                    "type": "integer",
+                    "x-order": "3",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "string",
+                    "x-order": "6",
+                    "example": ""
+                },
+                "comment_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "comment_text": {
+                    "type": "string",
+                    "example": "sample comment text"
+                },
+                "review": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/controllers.ReviewResponse"
+                        }
+                    ],
+                    "x-order:2": true
+                }
+            }
+        },
         "controllers.AllPhoneResponse": {
             "type": "object",
             "properties": {
@@ -755,6 +947,16 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.DeleteCommentResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "comment deleted successfully"
+                }
+            }
+        },
         "controllers.DeleteReviewResponse": {
             "type": "object",
             "properties": {
@@ -762,6 +964,35 @@ const docTemplate = `{
                     "type": "string",
                     "x-order": "0",
                     "example": "review deleted successfully"
+                }
+            }
+        },
+        "controllers.EditCommentInput": {
+            "type": "object",
+            "required": [
+                "comment_text"
+            ],
+            "properties": {
+                "comment_text": {
+                    "type": "string",
+                    "example": "sample comment text"
+                }
+            }
+        },
+        "controllers.EditCommentResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "x-order": "0",
+                    "example": "comment updated successfully"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    },
+                    "x-order": "1"
                 }
             }
         },
@@ -790,6 +1021,40 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Review"
+                    },
+                    "x-order": "1"
+                }
+            }
+        },
+        "controllers.GetCommentLikeResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "rows": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Like"
+                    },
+                    "x-order": "1"
+                }
+            }
+        },
+        "controllers.GetReviewLikesResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "x-order": "0",
+                    "example": 1
+                },
+                "rows": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Like"
                     },
                     "x-order": "1"
                 }
@@ -995,6 +1260,10 @@ const docTemplate = `{
                 "review_text": {
                     "type": "string",
                     "example": "product is nice"
+                },
+                "total_likes": {
+                    "type": "integer",
+                    "example": 10
                 },
                 "user_id": {
                     "type": "integer",
