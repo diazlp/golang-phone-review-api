@@ -20,8 +20,6 @@ This API provides endpoints to manage phone reviews, comments, and likes. It inc
 
 ## Getting Started
 
-This project is 
-
 To run this application locally:
 
 1. Clone the repository:
