@@ -2,16 +2,17 @@ package configs
 
 import (
 	"fmt"
+	"golang-phone-review-api/models"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"golang-phone-review-api/models"
 )
 
 func SetupDatabase() (*gorm.DB, error) {
 	username := "root"
 	password := ""
 	host := "tcp(127.0.0.1:3306)"
-	database := "phone-review"
+	database := "phone_review"
 
 	dsn := fmt.Sprintf("%v:%v@%v/%v?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, database)
 

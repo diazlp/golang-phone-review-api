@@ -18,6 +18,8 @@ func main() {
 	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.Host = "localhost:8070"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+	// docs.SwaggerInfo.Host = "devops-diazlp.sanberdev.com"
+	// docs.SwaggerInfo.Schemes = []string{"https"}	
 
 	db, err := configs.SetupDatabase()
 	if err != nil {
